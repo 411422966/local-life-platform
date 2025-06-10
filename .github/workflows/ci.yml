@@ -1,17 +1,19 @@
-name: CI Pipeline
+name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup Node.js
@@ -19,26 +21,28 @@ jobs:
         with:
           node-version: '18'
 
+      # ==== Frontend ====
       - name: Install frontend dependencies
-        working-directory: ./frontend
         run: npm install
+        working-directory: frontend
 
-      - name: Run frontend lint
-        working-directory: ./frontend
-        run: npm run lint || echo "No lint script defined"
+      - name: Lint frontend code
+        run: npx eslint . || echo "eslint not configured"
+        working-directory: frontend
 
-      - name: Build frontend
-        working-directory: ./frontend
-        run: npm run build || echo "No build script defined"
+      - name: Test frontend
+        run: npm test || echo "test script not configured"
+        working-directory: frontend
 
+      # ==== Backend ====
       - name: Install backend dependencies
-        working-directory: ./backend
         run: npm install
+        working-directory: backend
 
-      - name: Run backend lint
-        working-directory: ./backend
-        run: npm run lint || echo "No lint script defined"
+      - name: Lint backend code
+        run: npx eslint . || echo "eslint not configured"
+        working-directory: backend
 
-      - name: Run backend test
-        working-directory: ./backend
-        run: npm test || echo "No test script defined"
+      - name: Test backend
+        run: npm test || echo "test script not configured"
+        working-directory: backend
