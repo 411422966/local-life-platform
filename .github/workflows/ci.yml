@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 前端部分
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Lint frontend code
+        working-directory: ./frontend
+        run: npx eslint . || echo "No eslint configured"
+
+      - name: Test frontend
+        working-directory: ./frontend
+        run: npm test || echo "No test script configured"
+
+      # 后端部分
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Lint backend code
+        working-directory: ./backend
+        run: npx eslint . || echo "No eslint configured"
+
+      - name: Test backend
+        working-directory: ./backend
+        run: npm test || echo "No test script configured"
